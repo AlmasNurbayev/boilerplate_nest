@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Users } from 'src/entities/users.entity';
+import { Users } from '../../entities/users.entity';
 import { Repository } from 'typeorm';
-import { UserWithoutPasswordDto } from './schemas/user.dto';
+import { UserListDto, UserWithoutPasswordDto } from './schemas/user.dto';
 
 @Injectable()
 export class UsersService {
@@ -16,16 +16,19 @@ export class UsersService {
       select: ['id', 'email', 'is_confirmed', 'created_at'],
       where: { id },
     });
-    user.password = undefined;
     if (!user) {
       throw new NotFoundException('User not found');
     }
     return user;
   }
 
-  list() {
-    return this.usersRepository.find({
+  async list(): Promise<UserListDto> {
+    const [data, count] = await this.usersRepository.findAndCount({
       select: ['id', 'email', 'is_confirmed', 'created_at'],
     });
+    return {
+      data,
+      count,
+    };
   }
 }
