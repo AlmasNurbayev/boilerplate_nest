@@ -26,7 +26,7 @@ import {
   ArticlesFullDto,
   ArticlesListDto,
   ArticlesUpdateDto,
-} from './shemas/articles.dto';
+} from './schemas/articles.dto';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 
 @ApiTags('articles')

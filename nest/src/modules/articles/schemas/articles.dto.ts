@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsDateString,
   IsInt,
@@ -44,11 +45,12 @@ export class ArticlesFullDto {
 }
 
 export class ArticlesListDto {
-  @ApiProperty({ required: true })
+  @ApiProperty({ type: [ArticlesFullDto], required: true })
+  @IsArray()
   data: ArticlesFullDto[];
 
   @ApiProperty({ required: true })
-  total_count: number;
+  count: number;
 }
 
 export class ArticlesCreateDto {

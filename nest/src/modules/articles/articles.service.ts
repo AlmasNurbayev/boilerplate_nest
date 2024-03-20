@@ -5,7 +5,7 @@ import {
   ArticlesFullDto,
   ArticlesListDto,
   ArticlesUpdateDto,
-} from './shemas/articles.dto';
+} from './schemas/articles.dto';
 import {
   HttpException,
   HttpStatus,
@@ -42,7 +42,7 @@ export class ArticlesService {
 
     return {
       data: publications,
-      total_count: count,
+      count: count,
     };
   }
 
