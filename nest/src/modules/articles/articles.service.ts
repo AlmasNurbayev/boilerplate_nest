@@ -7,6 +7,7 @@ import {
   ArticlesUpdateDto,
 } from './schemas/articles.dto';
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -14,15 +15,22 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Users } from 'src/entities/users.entity';
 
 @Injectable()
 export class ArticlesService {
   constructor(
     @InjectRepository(Articles)
     private readonly articlesRepository: Repository<Articles>,
+    @InjectRepository(Users)
+    private readonly usersRepository: Repository<Users>,
   ) {}
 
   async create(data: ArticlesCreateDto): Promise<ArticlesFullDto> {
+    const user = await this.usersRepository.findOneBy({ id: data.author_id });
+    if (!user) {
+      throw new BadRequestException('Author_id is not found');
+    }
     const article = await this.articlesRepository.save(data);
     return article;
   }

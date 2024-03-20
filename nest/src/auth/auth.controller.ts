@@ -21,7 +21,6 @@ export class AuthController {
   @Post('register')
   @ApiOperation({ summary: 'register user' })
   @ApiResponse({ status: 201, type: UserWithoutPasswordDto })
-  //@UseGuards(UserConfirmedGuard)
   async register(@Body() userData: RegisterDto) {
     return this.authService.register(userData);
   }

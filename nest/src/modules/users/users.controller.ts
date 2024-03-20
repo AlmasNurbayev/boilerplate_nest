@@ -12,6 +12,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBadRequestResponse,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import {
   UserFullDto,
@@ -31,6 +32,7 @@ export class UsersController {
   @ApiResponse({ status: 200, type: UserWithoutPasswordDto })
   @ApiBadRequestResponse({ description: 'id # does not exist' })
   @UsePipes(new ValidationPipe())
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   getById(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.getById(id);
@@ -39,6 +41,7 @@ export class UsersController {
   @Get()
   @ApiOperation({ description: 'Get all by parameteres' })
   @ApiResponse({ status: 200, type: UserListDto })
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   list() {
     return this.usersService.list();

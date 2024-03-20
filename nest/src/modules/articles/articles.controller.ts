@@ -18,6 +18,7 @@ import {
   ApiResponse,
   ApiBadRequestResponse,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ArticlesService } from './articles.service';
 import {
@@ -38,6 +39,7 @@ export class ArticlesController {
   @ApiResponse({ status: 201, type: ArticlesFullDto })
   @ApiBody({ type: ArticlesCreateDto })
   @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   create(@Body() data: ArticlesCreateDto) {
     return this.articlesService.create(data);
@@ -64,6 +66,7 @@ export class ArticlesController {
   @ApiBody({ type: ArticlesUpdateDto })
   @ApiResponse({ status: 200, type: ArticlesFullDto })
   @UsePipes(new ValidationPipe())
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -77,6 +80,7 @@ export class ArticlesController {
   @ApiResponse({ status: 200, type: ArticlesFullDto })
   @ApiBadRequestResponse({ description: 'id # does not exist' })
   @UsePipes(new ValidationPipe())
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   delete(@Param('id', ParseIntPipe) id: number) {
     return this.articlesService.delete(id);

@@ -95,6 +95,12 @@ export class ArticlesFilterDto extends PaginationDto {
   @IsInt()
   id: number;
 
+  @Transform(({ value }) => parseInt(value))
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  author_id: number;
+
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
