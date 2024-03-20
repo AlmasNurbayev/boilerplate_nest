@@ -9,6 +9,12 @@ export default () => ({
       expiresIn: 86400,
     },
   },
+  jwtRefresh: {
+    secret: process.env.JWT_SECRET_KEY || 'secret',
+    signOptions: {
+      expiresIn: 86400,
+    },
+  },
   cors: {
     origin: [web],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',

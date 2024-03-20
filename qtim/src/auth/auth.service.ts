@@ -45,7 +45,8 @@ export class AuthService {
     const { password, ...userWithoutPassword } = user;
     return {
       user: userWithoutPassword,
-      token,
+      accessToken: 'Bearer ' + token,
+      refreshToken: 'token',
     };
   }
 

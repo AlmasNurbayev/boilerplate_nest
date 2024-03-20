@@ -2,6 +2,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
@@ -10,8 +11,8 @@ import { LoginDto } from '../schemas/login.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/entities/users.entity';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
+import { JwtPayload } from '../interfaces/jwt_payload';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -23,17 +24,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: configService.get('jwt.secret'),
-      passReqToCallback: true,
     });
   }
 
-  async validate(payload: LoginDto) {
+  async validate(payload: JwtPayload) {
     if (!payload) {
       throw new UnauthorizedException();
     }
     const user = await this.usersRepository.findOneBy({ email: payload.email });
     if (!user) {
-      throw new UnauthorizedException('email or password not correct');
+      throw new UnauthorizedException();
     }
     if (!user.is_confirmed) {
       throw new HttpException('User is not confirmed', HttpStatus.BAD_REQUEST);

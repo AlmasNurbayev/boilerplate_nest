@@ -6,5 +6,8 @@ export class AuthUserDto {
   user: UserWithoutPasswordDto;
 
   @ApiProperty({ required: true })
-  token: string;
+  accessToken: string;
+
+  @ApiProperty({ required: true })
+  refreshToken: string;
 }

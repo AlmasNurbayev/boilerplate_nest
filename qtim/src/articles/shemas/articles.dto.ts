@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsDateString, IsInt, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsBoolean, IsDateString, IsInt, IsOptional, IsString } from 'class-validator';
+import { PaginationDto } from 'src/common/pagination.dto';
 
 export class ArticlesFullDto {
   @ApiProperty({ required: true })
@@ -59,4 +61,22 @@ export class ArticlesCreateDto {
   @ApiProperty({ required: true })
   @IsString()
   image_path: string;
+}
+
+export class ArticlesFilterDto extends PaginationDto {
+  @Transform(({ value }) => parseInt(value))
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  id: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  title: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  text: string;
 }
