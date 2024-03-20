@@ -8,8 +8,9 @@ import {
   Body,
   Post,
   UseGuards,
-  Req,
   Query,
+  Patch,
+  Delete,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -19,7 +20,13 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import { ArticlesService } from './articles.service';
-import { ArticlesCreateDto, ArticlesFilterDto, ArticlesFullDto, ArticlesListDto } from './shemas/articles.dto';
+import {
+  ArticlesCreateDto,
+  ArticlesFilterDto,
+  ArticlesFullDto,
+  ArticlesListDto,
+  ArticlesUpdateDto,
+} from './shemas/articles.dto';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 
 @ApiTags('articles')
@@ -50,5 +57,28 @@ export class ArticlesController {
   @ApiResponse({ status: 200, type: ArticlesListDto })
   list(@Query() query: ArticlesFilterDto) {
     return this.articlesService.list(query);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'by id' })
+  @ApiBody({ type: ArticlesUpdateDto })
+  @ApiResponse({ status: 200, type: ArticlesFullDto })
+  @UsePipes(new ValidationPipe())
+  @UseGuards(JwtAuthGuard)
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: ArticlesUpdateDto,
+  ): Promise<ArticlesFullDto> {
+    return await this.articlesService.update(id, data);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'by id' })
+  @ApiResponse({ status: 200, type: ArticlesFullDto })
+  @ApiBadRequestResponse({ description: 'id # does not exist' })
+  @UsePipes(new ValidationPipe())
+  @UseGuards(JwtAuthGuard)
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.articlesService.delete(id);
   }
 }

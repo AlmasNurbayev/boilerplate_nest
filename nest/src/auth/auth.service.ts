@@ -2,7 +2,6 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -42,7 +41,7 @@ export class AuthService {
       email: user.email,
       id: user.id,
     });
-    const { password, ...userWithoutPassword } = user;
+    const { password: _, ...userWithoutPassword } = user; // eslint-disable-line
     return {
       user: userWithoutPassword,
       accessToken: 'Bearer ' + token,
@@ -59,10 +58,11 @@ export class AuthService {
     }
 
     const user = await this.userRepository.save({
+      is_confirmed: true, // TODO: mail confirmed
       email: userDto.email,
       password: await bcrypt.hash(userDto.password, 10),
     });
-    const { password, ...userWithoutPassword } = user;
+    const { password: _, ...userWithoutPassword } = user;     // eslint-disable-line
     return userWithoutPassword;
   }
 }

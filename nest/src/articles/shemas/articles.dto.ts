@@ -71,14 +71,17 @@ export class ArticlesCreateDto {
 
 export class ArticlesUpdateDto {
   @ApiProperty({ required: true })
+  @IsOptional()
   @IsString()
   title: string;
 
   @ApiProperty({ required: true })
+  @IsOptional()
   @IsString()
   text: string;
 
   @ApiProperty({ required: true })
+  @IsOptional()
   @IsString()
   image_path: string;
 }
