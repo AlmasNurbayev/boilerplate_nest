@@ -1,10 +1,10 @@
 # compiled output
-qtim/dist
-qtim/node_modules
-qtim/build
+nest/dist
+nest/node_modules
+nest/build
 
 # Logs
-qtim/logs
+nest/logs
 *.log
 npm-debug.log*
 pnpm-debug.log*
@@ -37,7 +37,7 @@ lerna-debug.log*
 
 # dotenv environment variable files
 .env
-qtim/.env
+nest/.env
 .env.development.local
 .env.test.local
 .env.production.local

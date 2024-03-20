@@ -48,7 +48,7 @@ export class ArticlesController {
   @Get()
   @ApiOperation({ description: 'Get all by parameteres' })
   @ApiResponse({ status: 200, type: ArticlesListDto })
-   list(@Query() query: ArticlesFilterDto) {
+  list(@Query() query: ArticlesFilterDto) {
     return this.articlesService.list(query);
   }
 }
