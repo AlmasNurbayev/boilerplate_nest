@@ -14,7 +14,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 //import { Users } from '../../entities/users.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
@@ -42,11 +42,23 @@ export class ArticlesService {
   }
 
   async list(filter: ArticlesFilterDto): Promise<ArticlesListDto> {
-    const { take, skip, order, ...where } = filter;
+    const { take, skip, order, title, text, ...where } = filter;
     let orderObject;
     if (order) {
       orderObject = { [order.split(' ')[0]]: order.split(' ')[1] };
     }
+
+    // поиск текста по подстроке
+    let titleSearch;
+    if (title) {
+      titleSearch = ILike(`%${title}%`);
+    }
+    // поиск текста по подстроке
+    let textSearch;
+    if (text) {
+      textSearch = ILike(`%${text}%`);
+    }
+
     const [articles, count] = await this.articlesRepository.findAndCount({
       // выбираем все поля кроме Text
       select: [
@@ -57,7 +69,7 @@ export class ArticlesService {
         'image_path',
         'updated_at',
       ],
-      where: { ...where },
+      where: { title: titleSearch, text: textSearch, ...where },
       take,
       skip,
       order: orderObject,
