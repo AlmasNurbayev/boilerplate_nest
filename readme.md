@@ -1,7 +1,16 @@
+Что сделано:
+- контейнер Nest, внутри TypeORM, class-validator, swagger, cache-manager
+- контейнеры Db, Cache
+
+Будет развернуто на VPS, порты открытые наружу:
+- 3100 - restAPI
+- 54320 - доступ к Postgres
+- 63790 - доступ к Redis
+
 TODO:
 - сессии, получать оттуда Req
+- refresh-token
 - почтовый конфирм при регистрации
-
 
 
 # **Тестовое задание для Middle NestJS разработчика**
