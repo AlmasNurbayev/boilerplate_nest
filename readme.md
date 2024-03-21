@@ -1,9 +1,12 @@
 Что сделано:
 - контейнер Nest, внутри TypeORM, class-validator, swagger, cache-manager
 - контейнеры Db, Cache
+- миграции стартуют вместе с Nest
+- запуск юнит-тестов ТОЛЬКО внутри контейнера Nest - npm run test
+- запуск e2e-тестов ТОЛЬКО внутри контейнера Nest - npm run test:e2e
 
 Будет развернуто на VPS, порты открытые наружу:
-- 3100 - restAPI
+- 3000 - restAPI (/users, /acticles) + swagger (/api)
 - 54320 - доступ к Postgres
 - 63790 - доступ к Redis
 

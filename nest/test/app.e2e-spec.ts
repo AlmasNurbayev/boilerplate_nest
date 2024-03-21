@@ -26,10 +26,16 @@ describe('AppController (e2e)', () => {
       .expect('Hello World!');
   });
 
-  it('/users/999 (GET fail)', () => {
+  it('/articles/999 (GET fail)', () => {
+    return request(app.getHttpServer()).get('/articles/999').expect(404);
+  });
+  it('/articles/ (GET success)', () => {
     return request(app.getHttpServer())
-      .get('/users/999')
-      .expect(400)
-      .expect('Bad Request');
+      .get('/articles/')
+      .expect(200)
+      .then(({ body }: request.Response) => {
+        const data = body.data;
+        expect(data).toBeDefined;
+      });
   });
 });
