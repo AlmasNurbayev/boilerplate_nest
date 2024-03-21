@@ -20,6 +20,7 @@ import { UsersModule } from './modules/users/users.module';
       useFactory: (configService) => configService.get('database'),
       inject: [ConfigService],
     }),
+
     AuthModule,
     ArticlesModule,
     UsersModule,

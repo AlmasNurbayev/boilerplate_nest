@@ -2,10 +2,15 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { EntityNotFoundErrorFilter } from './filters/db.not_found.filter';
+import { QueryFailedFilter } from './filters/db.query_failed.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.useGlobalFilters(new EntityNotFoundErrorFilter());
+  app.useGlobalFilters(new QueryFailedFilter());
+  
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

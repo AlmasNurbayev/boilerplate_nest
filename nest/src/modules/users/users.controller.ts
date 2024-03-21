@@ -14,13 +14,9 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import {
-  UserFullDto,
-  UserListDto,
-  UserWithoutPasswordDto,
-} from './schemas/user.dto';
+import { UserListDto, UserWithoutPasswordDto } from './schemas/user.dto';
 import { UsersService } from './users.service';
-import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 
 @ApiTags('users')
 @Controller('users')

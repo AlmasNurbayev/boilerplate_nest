@@ -3,6 +3,7 @@ nest/dist
 nest/node_modules
 nest/build
 db
+cache
 
 # Logs
 nest/logs

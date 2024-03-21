@@ -28,7 +28,7 @@ import {
   ArticlesListDto,
   ArticlesUpdateDto,
 } from './schemas/articles.dto';
-import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 
 @ApiTags('articles')
 @Controller('articles')

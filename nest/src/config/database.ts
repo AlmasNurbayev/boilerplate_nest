@@ -3,6 +3,7 @@ export default () => ({
     host: process.env.REDIS_HOST || 'cache',
     port: parseInt(process.env.REDIS_PORT) || 6379,
     password: process.env.REDIS_PASSWORD || 'secret',
+    ttl: 3600,
   },
   database: {
     type: 'postgres',
