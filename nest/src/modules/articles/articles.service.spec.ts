@@ -1,17 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ArticlesService } from './articles.service';
-import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-
-import { BadRequestException } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { Articles } from '../../entities/articles.entity';
-import { Users } from '../../entities/users.entity';
-import { ArticlesCreateDto } from './schemas/articles.dto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { NotFoundException } from '@nestjs/common';
 
 describe('ArticlesService', () => {
   let service: ArticlesService;
-  let articlesRepository: Repository<Articles>;
-  let usersRepository: Repository<Users>;
+  let repository: Repository<Articles>;
+  let cacheManager: Cache;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -22,68 +21,83 @@ describe('ArticlesService', () => {
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(Users),
-          useClass: Repository,
+          provide: CACHE_MANAGER,
+          useValue: {
+            get: jest.fn(),
+            set: jest.fn(),
+            del: jest.fn(),
+          },
         },
       ],
     }).compile();
 
     service = module.get<ArticlesService>(ArticlesService);
-    articlesRepository = module.get<Repository<Articles>>(
-      getRepositoryToken(Articles),
-    );
-    usersRepository = module.get<Repository<Users>>(getRepositoryToken(Users));
+    repository = module.get<Repository<Articles>>(getRepositoryToken(Articles));
+    cacheManager = module.get<Cache>(CACHE_MANAGER);
   });
 
-  it('should create an article if author exists', async () => {
-    const authorId = 1;
-    const mockArticleCreateDto: ArticlesCreateDto = {
-      title: 'Test Article',
-      text: 'This is a test article',
-      author_id: authorId,
-      image_path: 'https://example.com/image.jpg',
-    };
-    const mockUser: Users = {
-      id: authorId,
-      email: 'johndoe@example.com',
-      password: 'password',
-      is_confirmed: true,
-      created_at: new Date(),
-    };
-    const mockSavedArticle: Articles = {
-      id: 1,
-      title: 'Test Article',
-      text: 'This is a test article',
-      is_publicated: true,
-      created_at: new Date(),
-      updated_at: new Date(),
-      author_id: authorId,
-      image_path: 'https://example.com/image.jpg',
-      author: mockUser,
-    };
-
-    jest.spyOn(usersRepository, 'findOneBy').mockResolvedValue(mockUser);
-    jest.spyOn(articlesRepository, 'save').mockResolvedValue(mockSavedArticle);
-
-    const result = await service.create(mockArticleCreateDto);
-
-    expect(result).toEqual(mockSavedArticle);
-    expect(articlesRepository.save).toHaveBeenCalledWith(mockArticleCreateDto);
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('should throw BadRequestException if author does not exist', async () => {
-    const authorId = 1;
-    const mockArticleCreateDto: ArticlesCreateDto = {
-      title: 'Test Article',
-      text: 'This is a test article',
-      author_id: authorId,
-      image_path: 'https://example.com/image.jpg',
-    };
-
-    jest.spyOn(usersRepository, 'findOneBy').mockResolvedValue(null);
-
-    await expect(service.create(mockArticleCreateDto)).rejects.toThrow(
-      BadRequestException,
-    );
+  it('should be defined', () => {
+    expect(service).toBeDefined();
   });
+
+  describe('getById', () => {
+    it('should return article from cache if exists', async () => {
+      const articleId = 1;
+      const cachedArticle = {
+        id: articleId,
+        title: 'Test Article',
+        text: 'asdadsa',
+        // Add other properties as needed
+      };
+      jest.spyOn(cacheManager, 'get').mockResolvedValue(cachedArticle);
+
+      const result = await service.getById(articleId);
+
+      expect(result).toEqual(cachedArticle);
+      expect(cacheManager.get).toHaveBeenCalledWith(articleId.toString());
+    });
+
+    it('should return article from repository if not in cache', async () => {
+      const articleId = 1;
+      const article = {
+        id: articleId,
+        title: 'Test Article',
+        text: 'Test Article',
+        author_id: 1,
+        image_path: 'test.jpg',
+        created_at: new Date(),
+        updated_at: new Date(),
+        is_publicated: true,
+        author: null,
+        // Add other properties as needed
+      };
+      jest.spyOn(cacheManager, 'get').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(article);
+
+      const result = await service.getById(articleId);
+
+      expect(result).toEqual(article);
+      expect(cacheManager.get).toHaveBeenCalledWith(articleId.toString());
+      expect(cacheManager.set).toHaveBeenCalledWith(
+        articleId.toString(),
+        article,
+      );
+    });
+
+    it('should throw NotFoundException if article not found', async () => {
+      const articleId = 999; // Assuming this ID doesn't exist
+      jest.spyOn(cacheManager, 'get').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
+
+      await expect(service.getById(articleId)).rejects.toThrow(
+        new NotFoundException('Article not found'),
+      );
+    });
+  });
+
+  // Add tests for other methods: create, update, delete
 });

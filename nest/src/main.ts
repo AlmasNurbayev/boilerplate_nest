@@ -10,7 +10,7 @@ async function bootstrap() {
 
   app.useGlobalFilters(new EntityNotFoundErrorFilter());
   app.useGlobalFilters(new QueryFailedFilter());
-  
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

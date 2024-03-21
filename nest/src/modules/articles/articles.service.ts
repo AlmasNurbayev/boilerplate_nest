@@ -70,6 +70,10 @@ export class ArticlesService {
   }
 
   async getById(id: number): Promise<ArticlesFullDto> {
+    // сначала читаем кеш
+    if (await this.cacheManager.get(id.toString())) {
+      return await this.cacheManager.get(id.toString());
+    }
     const article = await this.articlesRepository.findOneBy({ id });
     if (!article) {
       throw new NotFoundException('Article not found');
