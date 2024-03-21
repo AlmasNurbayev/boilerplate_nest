@@ -23,7 +23,7 @@ services:
       - ${REDISPORT_EXTERNAL}:6379
 
   nest:
-    image: node:20.11.1
+    image: node:20
     depends_on:
     - db
     command: bash -c "npm install && npm run typeorm migration:run -- -d src/data-source.ts && npm run start:dev"
