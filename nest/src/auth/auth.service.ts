@@ -13,7 +13,7 @@ import { UserWithoutPasswordDto } from './schemas/user.dto';
 import { AuthUserDto } from './schemas/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { AuthCommonService } from './common/auth.common.service';
-import { Response } from 'express';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -68,7 +68,37 @@ export class AuthService {
       email: userDto.email,
       password: await bcrypt.hash(userDto.password, 10),
     });
-    const { password: _, ...userWithoutPassword } = user;     // eslint-disable-line
+    const { password: _, ...userWithoutPassword } = user; // eslint-disable-line
     return userWithoutPassword;
+  }
+
+  async refresh(req: Request) {
+    let inputRefreshToken = req.cookies?.refresh_qtim;
+    if (!inputRefreshToken) {
+      throw new UnauthorizedException();
+    }
+    inputRefreshToken = inputRefreshToken.replace('Bearer ', '');
+    // проверяем токен из куки
+    const { email, id } =
+      await this.authCommonService.verifyRefreshToken(inputRefreshToken);
+    // проверяем payload
+    const user = await this.userRepository.findOneBy({ email });
+    if (!user || user.id !== id) {
+      throw new UnauthorizedException();
+    }
+    // создаем новую пару токенов
+    const accessToken =
+      'Bearer ' +
+      (await this.authCommonService.generateAccessToken({
+        email,
+        id,
+      }));
+    const refreshToken =
+      'Bearer ' +
+      (await this.authCommonService.generateRefreshToken({
+        email,
+        id,
+      }));
+    return { accessToken, refreshToken };
   }
 }

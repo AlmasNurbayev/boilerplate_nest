@@ -15,4 +15,8 @@ export class AuthCommonService {
       expiresIn: '30d',
     });
   }
+
+  async verifyRefreshToken(token: string): Promise<JwtPayload> {
+    return this.jwtService.verify(token);
+  }
 }

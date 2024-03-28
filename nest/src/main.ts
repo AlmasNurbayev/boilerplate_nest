@@ -4,9 +4,11 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { EntityNotFoundErrorFilter } from './filters/db.not_found.filter';
 import { QueryFailedFilter } from './filters/db.query_failed.filter';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(cookieParser());
 
   app.useGlobalFilters(new EntityNotFoundErrorFilter());
   app.useGlobalFilters(new QueryFailedFilter());
@@ -33,6 +35,7 @@ async function bootstrap() {
       },
       'JWT-auth', // This name here is important for matching up with @ApiBearerAuth() in your controller!
     )
+    .addCookieAuth('refresh_qtim')
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
