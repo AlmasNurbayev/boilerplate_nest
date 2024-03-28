@@ -13,6 +13,7 @@ import { UserWithoutPasswordDto } from './schemas/user.dto';
 import { AuthUserDto } from './schemas/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { AuthCommonService } from './common/auth.common.service';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -37,15 +38,20 @@ export class AuthService {
     if (!(await bcrypt.compare(userDto.password, user.password))) {
       throw new UnauthorizedException('email or password not correct');
     }
-    const token = await this.authCommonService.generateToken({
+    const accessToken = await this.authCommonService.generateAccessToken({
       email: user.email,
       id: user.id,
     });
+    const refreshToken = await this.authCommonService.generateRefreshToken({
+      email: user.email,
+      id: user.id,
+    });
+
     const { password: _, ...userWithoutPassword } = user; // eslint-disable-line
     return {
       user: userWithoutPassword,
-      accessToken: 'Bearer ' + token,
-      refreshToken: 'token',
+      accessToken: 'Bearer ' + accessToken,
+      refreshToken: 'Bearer ' + refreshToken,
     };
   }
 
