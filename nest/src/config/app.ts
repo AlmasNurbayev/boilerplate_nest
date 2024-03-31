@@ -4,15 +4,9 @@ const web = process.env.WEB_URL || 'http://localhost:3005';
 export default () => ({
   port: parseInt(process.env.APP_PORT) || 3000,
   jwt: {
-    secret: process.env.JWT_SECRET_KEY || 'secret',
+    secret: process.env.JWT_SECRET_KEY || '!secret@key_',
     signOptions: {
-      expiresIn: 86400,
-    },
-  },
-  jwtRefresh: {
-    secret: process.env.JWT_SECRET_KEY || 'secret',
-    signOptions: {
-      expiresIn: 86400,
+      expiresIn: '1d',
     },
   },
   cors: {

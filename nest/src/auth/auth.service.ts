@@ -13,6 +13,7 @@ import { UserWithoutPasswordDto } from './schemas/user.dto';
 import { AuthUserDto } from './schemas/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { AuthCommonService } from './common/auth.common.service';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -37,15 +38,20 @@ export class AuthService {
     if (!(await bcrypt.compare(userDto.password, user.password))) {
       throw new UnauthorizedException('email or password not correct');
     }
-    const token = await this.authCommonService.generateToken({
+    const accessToken = await this.authCommonService.generateAccessToken({
       email: user.email,
       id: user.id,
     });
+    const refreshToken = await this.authCommonService.generateRefreshToken({
+      email: user.email,
+      id: user.id,
+    });
+
     const { password: _, ...userWithoutPassword } = user; // eslint-disable-line
     return {
       user: userWithoutPassword,
-      accessToken: 'Bearer ' + token,
-      refreshToken: 'token',
+      accessToken: 'Bearer ' + accessToken,
+      refreshToken: 'Bearer ' + refreshToken,
     };
   }
 
@@ -62,7 +68,37 @@ export class AuthService {
       email: userDto.email,
       password: await bcrypt.hash(userDto.password, 10),
     });
-    const { password: _, ...userWithoutPassword } = user;     // eslint-disable-line
+    const { password: _, ...userWithoutPassword } = user; // eslint-disable-line
     return userWithoutPassword;
+  }
+
+  async refresh(req: Request) {
+    let inputRefreshToken = req.cookies?.refresh_qtim;
+    if (!inputRefreshToken) {
+      throw new UnauthorizedException();
+    }
+    inputRefreshToken = inputRefreshToken.replace('Bearer ', '');
+    // проверяем токен из куки
+    const { email, id } =
+      await this.authCommonService.verifyRefreshToken(inputRefreshToken);
+    // проверяем payload
+    const user = await this.userRepository.findOneBy({ email });
+    if (!user || user.id !== id) {
+      throw new UnauthorizedException();
+    }
+    // создаем новую пару токенов
+    const accessToken =
+      'Bearer ' +
+      (await this.authCommonService.generateAccessToken({
+        email,
+        id,
+      }));
+    const refreshToken =
+      'Bearer ' +
+      (await this.authCommonService.generateRefreshToken({
+        email,
+        id,
+      }));
+    return { accessToken, refreshToken };
   }
 }

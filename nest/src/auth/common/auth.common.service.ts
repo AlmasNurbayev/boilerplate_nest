@@ -6,7 +6,17 @@ import { JwtPayload } from '../interfaces/jwt_payload';
 export class AuthCommonService {
   constructor(private readonly jwtService: JwtService) {}
 
-  async generateToken(payload: JwtPayload): Promise<string> {
+  async generateAccessToken(payload: JwtPayload): Promise<string> {
     return this.jwtService.sign(payload);
+  }
+
+  async generateRefreshToken(payload: JwtPayload): Promise<string> {
+    return this.jwtService.sign(payload, {
+      expiresIn: '30d',
+    });
+  }
+
+  async verifyRefreshToken(token: string): Promise<JwtPayload> {
+    return this.jwtService.verify(token);
   }
 }
