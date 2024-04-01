@@ -5,6 +5,7 @@ nest/build
 db
 cache
 mongo
+backups
 
 # Logs
 nest/logs

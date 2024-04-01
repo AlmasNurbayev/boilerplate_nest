@@ -1,0 +1,1 @@
+docker exec test-qtim-mongo-1 sh -c 'mongodump --username $MONGO_INITDB_ROOT_USERNAME --password $MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin --db test-qtim --archive' > /home/almas/test-qtim/backups/mongo-`date +\%Y-\%m-\%d`.backup

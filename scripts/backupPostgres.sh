@@ -1,0 +1,1 @@
+docker exec -t test-qtim-db-1 pg_dump -c -U ps3 -d test-qtim > /home/almas/test-qtim/backups/postrgres-`date +\%Y-\%m-\%d`.backup
