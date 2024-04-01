@@ -19,4 +19,10 @@ export default () => ({
     synchronize: false,
     logging: false,
   },
+  mongo: {
+    uri:
+      `mongodb://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@mongo:27017/` ||
+      'mongodb://localhost:27017/',
+    dbName: process.env.MONGO_DATABASE || 'teat-qtim',
+  },
 });

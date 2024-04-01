@@ -10,6 +10,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
+import { MongooseModule } from '@nestjs/mongoose';
+import { BooksModule } from './modules/books/books.module';
 
 @Module({
   imports: [
@@ -35,10 +37,16 @@ import * as redisStore from 'cache-manager-redis-store';
       }),
       inject: [ConfigService],
     }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => configService.get('mongo'),
+      inject: [ConfigService],
+    }),
 
     AuthModule,
     ArticlesModule,
     UsersModule,
+    BooksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

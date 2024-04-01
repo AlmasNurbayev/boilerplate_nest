@@ -1,7 +1,7 @@
 Что сделано:
 - контейнер Nest, внутри TypeORM, class-validator, swagger, cache-manager
-- контейнеры Db, Cache
-- миграции стартуют вместе с Nest
+- контейнеры Db, Cache, Mongo
+- миграции Postgres стартуют вместе с Nest
 - запуск юнит-тестов ТОЛЬКО внутри контейнера Nest - npm run test
 - запуск e2e-тестов ТОЛЬКО внутри контейнера Nest - npm run test:e2e
 
@@ -9,10 +9,11 @@
 - 3000 - restAPI (/users, /acticles) + swagger (/api)
 - 54320 - доступ к Postgres
 - 63790 - доступ к Redis
+- 27019 - доступ к Mongo
 
 TODO:
-- сессии, получать оттуда Req
 - mongoDB - добавить пару документов на запись и чтение
+- сессии, получать оттуда Req
 - почтовый конфирм при регистрации
 
 

@@ -4,6 +4,7 @@ nest/node_modules
 nest/build
 db
 cache
+mongo
 
 # Logs
 nest/logs

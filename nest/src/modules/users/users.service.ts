@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from '../../entities/users.entity';
 import { Repository } from 'typeorm';
 import { UserListDto, UserWithoutPasswordDto } from './schemas/user.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class UsersService {

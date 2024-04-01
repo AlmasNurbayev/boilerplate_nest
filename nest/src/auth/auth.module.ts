@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AuthCommonService } from './common/auth.common.service';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
