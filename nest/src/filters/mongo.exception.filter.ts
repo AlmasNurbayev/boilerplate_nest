@@ -3,6 +3,7 @@ import {
   Catch,
   HttpStatus,
   ArgumentsHost,
+  Logger,
 } from '@nestjs/common';
 import { MongoServerError } from 'mongodb';
 import * as mongoose from 'mongoose';
@@ -14,14 +15,15 @@ export class MongoExceptionFilter implements ExceptionFilter {
     const response = context.getResponse();
 
     if (exception.code === 11000) {
-      console.log('MongoError: ', exception.message);
+      Logger.error('MongoError: ', exception.message);
       response.status(HttpStatus.CONFLICT).json({
         message: 'Duplicate key error',
         object: Object.keys(exception.keyValue),
       });
+    } else {
+      response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error.',
+      });
     }
-    response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-      message: 'Internal server error.',
-    });
   }
 }

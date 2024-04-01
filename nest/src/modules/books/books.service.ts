@@ -52,7 +52,8 @@ export class BooksService {
       .find(where)
       .skip(skip)
       .limit(take)
-      .sort(sort);
+      .sort(sort)
+      .populate('comments');
     const count = await this.bookModel.countDocuments(where);
     return {
       data: books,

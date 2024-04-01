@@ -1,23 +1,23 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import { HydratedDocument, SchemaTypes } from 'mongoose';
-import { Comment } from './comments.mongo';
+import { Book } from './books.mongo';
 
-export type BooksDocument = HydratedDocument<Book>;
+export type CommentsDocument = HydratedDocument<Comment>;
 
 @Schema()
 // название класса + "s" сопоставляется с коллекцией в MongoDB
-export class Book {
-  @Prop({ type: SchemaTypes.String, required: true, unique: true })
+export class Comment {
+  @Prop({ type: SchemaTypes.String, required: true })
   title: string;
 
   @Prop({ type: SchemaTypes.String, required: true })
   text: string;
 
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Book', required: true })
+  book: Book;
+
   @Prop({ type: SchemaTypes.Date, default: Date.now })
   created_at: Date;
-
-  @Prop([{ type: SchemaTypes.ObjectId, ref: 'Comment' }])
-  comments: Comment[];
 }
 
-export const BooksSchema = SchemaFactory.createForClass(Book);
+export const CommentsSchema = SchemaFactory.createForClass(Comment);

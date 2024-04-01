@@ -1,8 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsDateString, IsOptional, IsString } from 'class-validator';
-import { PaginationDto } from '../../../common/pagination.dto';
+import { PaginationDto } from 'src/common/pagination.dto';
 
-export class BooksFullDto {
+export class CommentsCreateDto {
+  @ApiProperty({ required: true })
+  @IsString()
+  title: string;
+
+  @ApiProperty({ required: true })
+  @IsString()
+  text: string;
+
+  @ApiProperty({ required: true })
+  @IsString()
+  book: string;
+}
+
+export class CommentsFullDto {
   @ApiProperty({ required: true })
   @IsString()
   _id: string;
@@ -14,44 +28,26 @@ export class BooksFullDto {
   @ApiProperty({ required: true })
   @IsString()
   text: string;
+
+  @ApiProperty({ required: true })
+  @IsString()
+  book: string;
 
   @ApiProperty({ required: true })
   @IsDateString()
   created_at: Date;
 }
 
-export class BooksListDto {
-  @ApiProperty({ type: [BooksFullDto], required: true })
+export class CommentsListDto {
+  @ApiProperty({ type: [CommentsFullDto], required: true })
   @IsArray()
-  data: BooksFullDto[];
+  data: CommentsFullDto[];
 
   @ApiProperty({ required: true })
   count: number;
 }
 
-export class BooksCreateDto {
-  @ApiProperty({ required: true })
-  @IsString()
-  title: string;
-
-  @ApiProperty({ required: true })
-  @IsString()
-  text: string;
-}
-
-export class BooksUpdateDto {
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  title: string;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  text: string;
-}
-
-export class BooksFilterDto extends PaginationDto {
+export class CommentsFilterDto extends PaginationDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
@@ -66,4 +62,26 @@ export class BooksFilterDto extends PaginationDto {
   @IsOptional()
   @IsString()
   text: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  book_id: string;
+}
+
+export class CommentsUpdateDto {
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  title: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  text: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  book: string;
 }

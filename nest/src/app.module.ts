@@ -12,6 +12,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BooksModule } from './modules/books/books.module';
+import { CommentsModule } from './modules/comments/comments.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { BooksModule } from './modules/books/books.module';
     ArticlesModule,
     UsersModule,
     BooksModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
