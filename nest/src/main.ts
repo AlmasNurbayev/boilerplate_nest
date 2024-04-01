@@ -6,6 +6,7 @@ import { EntityNotFoundErrorFilter } from './filters/db.not_found.filter';
 import { QueryFailedFilter } from './filters/db.query_failed.filter';
 import * as cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
+import { MongoExceptionFilter } from './filters/mongo.exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,7 @@ async function bootstrap() {
 
   app.useGlobalFilters(new EntityNotFoundErrorFilter());
   app.useGlobalFilters(new QueryFailedFilter());
+  app.useGlobalFilters(new MongoExceptionFilter());
 
   app.useGlobalPipes(
     new ValidationPipe({
