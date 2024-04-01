@@ -87,7 +87,7 @@ export class CommentsService {
       new: true,
     });
     if (!comment) {
-      throw new BadRequestException('Book not found');
+      throw new BadRequestException('Comment not found');
     }
     return comment;
   }

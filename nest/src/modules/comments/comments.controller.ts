@@ -1,7 +1,30 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { CommentsService } from './comments.service';
-import { CommentsCreateDto, CommentsFilterDto, CommentsFullDto, CommentsListDto, CommentsUpdateDto } from './schemas/comments.dto';
-import { ApiTags, ApiResponse, ApiBody, ApiBearerAuth, ApiOperation, ApiBadRequestResponse } from '@nestjs/swagger';
+import {
+  CommentsCreateDto,
+  CommentsFilterDto,
+  CommentsFullDto,
+  CommentsListDto,
+  CommentsUpdateDto,
+} from './schemas/comments.dto';
+import {
+  ApiTags,
+  ApiResponse,
+  ApiBody,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiBadRequestResponse,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 
 @ApiTags('comments')
