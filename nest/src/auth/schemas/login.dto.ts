@@ -7,11 +7,15 @@ export enum LoginType {
 }
 
 export class LoginDto {
-  @ApiProperty({ required: true })
+  @ApiProperty({
+    required: true,
+    description:
+      'email or phone with format - only digits for example 77081234567',
+  })
   @IsString()
   login: string;
 
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: true, description: 'type login - email or phone' })
   @IsEnum(LoginType)
   type: LoginType;
 

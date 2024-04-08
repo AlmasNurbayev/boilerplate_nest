@@ -4,11 +4,19 @@ import { LoginType } from './login.dto';
 import { Transform } from 'class-transformer';
 
 export class RequestConfirmDto {
-  @ApiProperty({ required: true })
+  @ApiProperty({
+    required: true,
+    description:
+      'email or phone with format - only digits for example 77081234567',
+  })
   @IsString()
   login: string;
 
-  @ApiProperty({ required: true, example: 'email' })
+  @ApiProperty({
+    required: true,
+    description: 'set email or phone for choose transport type',
+    example: 'email',
+  })
   @IsEnum(LoginType)
   type: LoginType;
 }
@@ -20,11 +28,19 @@ export class RequestConfirmReturnDto {
 }
 
 export class SubmitConfirmDto {
-  @ApiProperty({ required: true })
+  @ApiProperty({
+    required: true,
+    description:
+      'email or phone with format - only digits for example 77081234567',
+  })
   @IsString()
   login: string;
 
-  @ApiProperty({ required: true, example: 'email' })
+  @ApiProperty({
+    required: true,
+    description: 'set email or phone for choose transport type',
+    example: 'email',
+  })
   @IsEnum(LoginType)
   type: LoginType;
 

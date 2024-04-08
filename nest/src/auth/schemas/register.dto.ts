@@ -7,7 +7,10 @@ export class RegisterDto {
   @IsString()
   email: string;
 
-  @ApiProperty({ required: true })
+  @ApiProperty({
+    required: true,
+    description: 'phone with format only digits, for example 77081234567',
+  })
   @IsOptional()
   @IsString()
   phone: string;
