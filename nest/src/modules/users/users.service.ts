@@ -13,7 +13,7 @@ export class UsersService {
 
   async getById(id: number): Promise<UserWithoutPasswordDto> {
     const user = await this.usersRepository.findOne({
-      select: ['id', 'email', 'is_confirmed', 'created_at'],
+      select: ['id', 'email', 'created_at'],
       where: { id },
     });
     if (!user) {
@@ -24,7 +24,7 @@ export class UsersService {
 
   async list(): Promise<UserListDto> {
     const [data, count] = await this.usersRepository.findAndCount({
-      select: ['id', 'email', 'is_confirmed', 'created_at'],
+      select: ['id', 'email', 'created_at'],
     });
     return {
       data,

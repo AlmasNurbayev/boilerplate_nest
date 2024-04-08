@@ -37,10 +37,6 @@ export class UserWithoutPasswordDto {
   // password: string;
 
   @ApiProperty()
-  @IsBoolean()
-  is_confirmed: boolean;
-
-  @ApiProperty()
   @IsDateString()
   created_at: Date;
 }

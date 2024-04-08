@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Index('idx_email', ['email', 'is_confirmed'])
+@Index('idx_email', ['email', 'phone'])
 @Entity()
 export class Users {
   @PrimaryGeneratedColumn()
@@ -20,9 +20,6 @@ export class Users {
 
   @Column('varchar', { select: false })
   password: string;
-
-  @Column('boolean', { default: false })
-  is_confirmed: boolean;
 
   @CreateDateColumn()
   created_at: Date;

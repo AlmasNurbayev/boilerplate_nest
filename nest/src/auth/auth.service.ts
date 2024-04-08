@@ -43,19 +43,23 @@ export class AuthService {
     let user;
     if (userDto.type === LoginType.email) {
       user = await this.userRepository.findOne({
-        select: ['id', 'email', 'password', 'is_confirmed', 'created_at'],
+        select: ['id', 'email', 'password', 'created_at'],
         where: { email: userDto.login },
       });
     } else if (userDto.type === LoginType.phone) {
       user = await this.userRepository.findOne({
-        select: ['id', 'email', 'password', 'is_confirmed', 'created_at'],
+        select: ['id', 'email', 'password', 'created_at'],
         where: { phone: userDto.login },
       });
     }
     if (!user) {
       throw new UnauthorizedException('login or password not correct');
     }
-    if (!(await bcrypt.compare(userDto.password, user.password))) {
+    const passwordCorrect = await bcrypt.compare(
+      userDto.password,
+      user.password,
+    );
+    if (!passwordCorrect) {
       throw new UnauthorizedException('email or password not correct');
     }
     let accessToken, refreshToken;
@@ -129,7 +133,6 @@ export class AuthService {
     }
 
     const user = await this.userRepository.save({
-      is_confirmed: true, // TODO: mail confirmed
       email: userDto.email,
       phone: userDto.phone,
       password: await bcrypt.hash(userDto.password, 10),

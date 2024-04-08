@@ -1,10 +1,4 @@
-import {
-  IsArray,
-  IsBoolean,
-  IsDateString,
-  IsInt,
-  IsString,
-} from 'class-validator';
+import { IsArray, IsDateString, IsInt, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UserFullDto {
@@ -19,10 +13,6 @@ export class UserFullDto {
   @ApiProperty()
   @IsString()
   password: string;
-
-  @ApiProperty()
-  @IsBoolean()
-  is_confirmed: boolean;
 
   @ApiProperty()
   @IsDateString()
@@ -41,10 +31,6 @@ export class UserWithoutPasswordDto {
   // @ApiProperty()
   // @IsString()
   // password: string;
-
-  @ApiProperty()
-  @IsBoolean()
-  is_confirmed: boolean;
 
   @ApiProperty()
   @IsDateString()
