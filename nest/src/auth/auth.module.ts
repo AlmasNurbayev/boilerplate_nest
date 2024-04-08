@@ -10,9 +10,12 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthCommonService } from './common/auth.common.service';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
+import { SmscService } from 'src/providers/smsc.service';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
+    HttpModule,
     TypeOrmModule.forFeature([Users]),
     ConfigModule,
     PassportModule.register({
@@ -40,7 +43,12 @@ import * as redisStore from 'cache-manager-redis-store';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, AuthCommonService],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    AuthCommonService,
+    SmscService,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

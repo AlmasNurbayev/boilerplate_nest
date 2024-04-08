@@ -27,6 +27,7 @@ import {
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { ConfirmRedis } from './interfaces/confirm_redis';
+import { SmscService } from 'src/providers/smsc.service';
 
 @Injectable()
 export class AuthService {
@@ -37,6 +38,7 @@ export class AuthService {
     private readonly authCommonService: AuthCommonService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly mailerService: MailerService,
+    private readonly smscService: SmscService,
   ) {}
 
   async login(userDto: LoginDto): Promise<AuthUserDto> {
@@ -87,7 +89,6 @@ export class AuthService {
       });
     }
     const { password: _, ...userWithoutPassword } = user; // eslint-disable-line
-    await this.cacheManager.set(user.id.toString(), userWithoutPassword); // добавляем в кеш
     return {
       user: userWithoutPassword,
       accessToken: 'Bearer ' + accessToken,
@@ -198,7 +199,7 @@ export class AuthService {
           from: this.configService.get('mailer.transport.auth.user'),
           to: data.login,
           subject: 'confirm code ' + this.configService.get('name'),
-          text: 'use this code: ' + code,
+          text: `use this code: ${code}`,
         });
         success = true;
       } catch (error) {
@@ -206,10 +207,19 @@ export class AuthService {
         Logger.error(error);
       }
     } else if (data.type === LoginType.phone) {
+      try {
+        // отправляем ассинхронно и не дожидаемся ответа, чтобы не тормозить сервис
+        this.smscService.sendSms(data.login, `Confirm code: ${code}`);
+        success = true;
+      } catch (error) {
+        success = false;
+        Logger.error(error);
+      }
     } else {
       throw new HttpException('Incorrect type', HttpStatus.BAD_REQUEST);
     }
 
+    // отправляем ассинхронно и всегда будет true
     return {
       message: success ? 'message sended' : 'message not sended',
     };
