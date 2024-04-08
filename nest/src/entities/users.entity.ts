@@ -12,8 +12,11 @@ export class Users {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('varchar', { unique: true })
+  @Column('varchar', { nullable: true })
   email: string;
+
+  @Column('varchar', { nullable: true })
+  phone: string;
 
   @Column('varchar', { select: false })
   password: string;

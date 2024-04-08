@@ -18,7 +18,7 @@ export class QueryFailedFilter implements ExceptionFilter {
       });
     } else {
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: 'Internal server error.',
+        message: exception.message,
       });
     }
   }

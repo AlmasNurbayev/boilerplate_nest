@@ -1,4 +1,7 @@
+import { LoginType } from '../schemas/login.dto';
+
 export interface JwtPayload {
-  email: string;
+  type: LoginType;
+  login: string;
   id: number;
 }

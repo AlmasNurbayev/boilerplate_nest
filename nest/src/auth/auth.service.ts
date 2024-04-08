@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from '../entities/users.entity';
 import { Repository } from 'typeorm';
 import { RegisterDto } from './schemas/register.dto';
-import { LoginDto } from './schemas/login.dto';
+import { LoginDto, LoginType } from './schemas/login.dto';
 import { UserWithoutPasswordDto } from './schemas/user.dto';
 import { AuthUserDto } from './schemas/auth.dto';
 import * as bcrypt from 'bcrypt';
@@ -24,13 +24,20 @@ export class AuthService {
   ) {}
 
   async login(userDto: LoginDto): Promise<AuthUserDto> {
-    const user = await this.userRepository.findOne({
-      select: ['id', 'email', 'password', 'is_confirmed', 'created_at'],
-      where: { email: userDto.email },
-    });
-
+    let user;
+    if (userDto.type === LoginType.email) {
+      user = await this.userRepository.findOne({
+        select: ['id', 'email', 'password', 'is_confirmed', 'created_at'],
+        where: { email: userDto.login },
+      });
+    } else if (userDto.type === LoginType.phone) {
+      user = await this.userRepository.findOne({
+        select: ['id', 'email', 'password', 'is_confirmed', 'created_at'],
+        where: { phone: userDto.login },
+      });
+    }
     if (!user) {
-      throw new UnauthorizedException('email or password not correct');
+      throw new UnauthorizedException('login or password not correct');
     }
     if (!user.is_confirmed) {
       throw new HttpException('User is not confirmed', HttpStatus.BAD_REQUEST);
@@ -38,14 +45,30 @@ export class AuthService {
     if (!(await bcrypt.compare(userDto.password, user.password))) {
       throw new UnauthorizedException('email or password not correct');
     }
-    const accessToken = await this.authCommonService.generateAccessToken({
-      email: user.email,
-      id: user.id,
-    });
-    const refreshToken = await this.authCommonService.generateRefreshToken({
-      email: user.email,
-      id: user.id,
-    });
+    let accessToken, refreshToken;
+    if (userDto.type === LoginType.email) {
+      accessToken = await this.authCommonService.generateAccessToken({
+        type: LoginType.email,
+        login: user.email,
+        id: user.id,
+      });
+      refreshToken = await this.authCommonService.generateRefreshToken({
+        type: LoginType.email,
+        login: user.email,
+        id: user.id,
+      });
+    } else if (userDto.type === LoginType.phone) {
+      accessToken = await this.authCommonService.generateAccessToken({
+        type: LoginType.phone,
+        login: user.phone,
+        id: user.id,
+      });
+      refreshToken = await this.authCommonService.generateRefreshToken({
+        type: LoginType.phone,
+        login: user.phone,
+        id: user.id,
+      });
+    }
 
     const { password: _, ...userWithoutPassword } = user; // eslint-disable-line
     return {
@@ -56,16 +79,24 @@ export class AuthService {
   }
 
   async register(userDto: RegisterDto): Promise<UserWithoutPasswordDto> {
-    const existUser = await this.userRepository.findOneBy({
-      email: userDto.email,
-    });
-    if (existUser) {
-      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+    if (!userDto.email && !userDto.phone) {
+      throw new HttpException(
+        'Must be content email or phone',
+        HttpStatus.BAD_REQUEST,
+      );
     }
-
+    // ищем пользователя с совпадением email или phone
+    const existUser = await this.userRepository.findOneBy([
+      { email: userDto.email },
+      { phone: userDto.phone },
+    ]);
+    if (existUser) {
+      throw new HttpException('User already exist', HttpStatus.BAD_REQUEST);
+    }
     const user = await this.userRepository.save({
       is_confirmed: true, // TODO: mail confirmed
       email: userDto.email,
+      phone: userDto.phone,
       password: await bcrypt.hash(userDto.password, 10),
     });
     const { password: _, ...userWithoutPassword } = user; // eslint-disable-line
@@ -79,10 +110,16 @@ export class AuthService {
     }
     inputRefreshToken = inputRefreshToken.replace('Bearer ', '');
     // проверяем токен из куки
-    const { email, id } =
+    const { type, login, id } =
       await this.authCommonService.verifyRefreshToken(inputRefreshToken);
     // проверяем payload
-    const user = await this.userRepository.findOneBy({ email });
+    let user;
+    if (type === LoginType.email) {
+      user = await this.userRepository.findOneBy({ email: login });
+    } else if (type === LoginType.phone) {
+      user = await this.userRepository.findOneBy({ phone: login });
+    }
+
     if (!user || user.id !== id) {
       throw new UnauthorizedException();
     }
@@ -90,13 +127,15 @@ export class AuthService {
     const accessToken =
       'Bearer ' +
       (await this.authCommonService.generateAccessToken({
-        email,
+        type,
+        login,
         id,
       }));
     const refreshToken =
       'Bearer ' +
       (await this.authCommonService.generateRefreshToken({
-        email,
+        type,
+        login,
         id,
       }));
     return { accessToken, refreshToken };
