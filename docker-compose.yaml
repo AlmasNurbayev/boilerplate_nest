@@ -46,6 +46,7 @@ services:
       - ./nest/:/app
     ports:
       - 3000:3000
+      - ${EMAIL_PORT}:${EMAIL_PORT}
     environment:
       TZ: 'Asia/Almaty'
       DB_HOST: ${DB_HOST}
@@ -57,6 +58,11 @@ services:
       REDIS_PORT: ${REDIS_PORT}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       MONGO_DATABASE: ${MONGO_DATABASE}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_PORT: ${EMAIL_PORT}
+      EMAIL_SECURE: ${EMAIL_SECURE}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
       APP_URL: ${APP_URL}
       APP_PORT: ${APP_PORT}
       WEB_URL: ${WEB_URL}

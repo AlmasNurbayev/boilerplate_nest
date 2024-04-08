@@ -2,6 +2,7 @@
 const web = process.env.WEB_URL || 'http://localhost:3005';
 
 export default () => ({
+  name: 'test_qtim',
   port: parseInt(process.env.APP_PORT) || 3000,
   jwt: {
     secret: process.env.JWT_SECRET_KEY || '!secret@key_',

@@ -1,6 +1,5 @@
-import { IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsOptional, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { LoginType } from './login.dto';
 
 export class RegisterDto {
   @ApiProperty({ required: true })

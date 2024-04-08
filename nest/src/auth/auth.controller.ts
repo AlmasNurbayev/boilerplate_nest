@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res, Get, Req } from '@nestjs/common';
+import { Controller, Post, Body, Res, Get, Req, Query } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -12,6 +12,12 @@ import { AuthUserDto } from './schemas/auth.dto';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
 import { RefreshResponseDto } from './schemas/refresh.dto';
+import {
+  RequestConfirmDto,
+  RequestConfirmReturnDto,
+  SubmitConfirmDto,
+  SubmitConfirmReturnDto,
+} from './schemas/confirm.dto';
 
 @Controller('auth')
 @ApiTags('Users authorisation')
@@ -45,5 +51,23 @@ export class AuthController {
   @ApiResponse({ status: 200, type: RefreshResponseDto })
   async refresh(@Req() req: Request) {
     return this.authService.refresh(req);
+  }
+
+  @Get('request_confirm')
+  @ApiOperation({
+    summary: 'request confirm for user',
+  })
+  @ApiResponse({ status: 200, type: RequestConfirmReturnDto })
+  async requestConfirm(@Query() data: RequestConfirmDto) {
+    return this.authService.requestConfirm(data);
+  }
+
+  @Get('submit_confirm')
+  @ApiOperation({
+    summary: 'sended code confirm for user',
+  })
+  @ApiResponse({ status: 200, type: SubmitConfirmReturnDto })
+  async submitConfirm(@Query() data: SubmitConfirmDto) {
+    return this.authService.submitConfirm(data);
   }
 }

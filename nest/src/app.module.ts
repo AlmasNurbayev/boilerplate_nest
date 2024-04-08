@@ -3,8 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ArticlesModule } from './modules/articles/articles.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import database from './config/database';
-import app from './config/app';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
@@ -13,12 +11,14 @@ import * as redisStore from 'cache-manager-redis-store';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BooksModule } from './modules/books/books.module';
 import { CommentsModule } from './modules/comments/comments.module';
+import { app, database, mailer } from './config';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       // cache: true,
-      load: [app, database],
+      load: [app, database, mailer],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -29,11 +29,13 @@ import { CommentsModule } from './modules/comments/comments.module';
       imports: [ConfigModule],
       isGlobal: true,
       useFactory: async (configService: ConfigService) => ({
+        name: 'cache',
         isGlobal: true,
         store: redisStore,
         ttl: configService.get<number>('cache.ttl'),
         host: configService.get<string>('cache.host'),
         port: configService.get<number>('cache.port'),
+        db: configService.get<number>('cache.db'),
         password: configService.get<number>('cache.password'),
       }),
       inject: [ConfigService],
@@ -43,7 +45,11 @@ import { CommentsModule } from './modules/comments/comments.module';
       useFactory: (configService: ConfigService) => configService.get('mongo'),
       inject: [ConfigService],
     }),
-
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService) => configService.get('mailer'),
+      inject: [ConfigService],
+    }),
     AuthModule,
     ArticlesModule,
     UsersModule,

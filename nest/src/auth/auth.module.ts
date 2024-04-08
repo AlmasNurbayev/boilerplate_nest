@@ -8,6 +8,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AuthCommonService } from './common/auth.common.service';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
@@ -19,6 +21,21 @@ import { AuthCommonService } from './common/auth.common.service';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (ConfigService) => ConfigService.get('jwt'),
+      inject: [ConfigService],
+    }),
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      isGlobal: true,
+      useFactory: async (configService: ConfigService) => ({
+        name: 'userCache',
+        isGlobal: true,
+        store: redisStore,
+        ttl: configService.get<number>('userCache.ttl'),
+        host: configService.get<string>('userCache.host'),
+        port: configService.get<number>('userCache.port'),
+        db: configService.get<number>('userCache.db'),
+        password: configService.get<number>('userCache.password'),
+      }),
       inject: [ConfigService],
     }),
   ],

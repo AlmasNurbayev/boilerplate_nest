@@ -25,6 +25,7 @@
     "migration:down": "npm run typeorm migration:revert -- -d src/data-source.ts"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^1.11.2",
     "@nestjs/cache-manager": "^2.2.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.0",
@@ -43,6 +44,7 @@
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
     "mongoose": "^8.2.4",
+    "nodemailer": "^6.9.13",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.11.3",

@@ -4,6 +4,14 @@ export default () => ({
     port: parseInt(process.env.REDIS_PORT) || 6379,
     password: process.env.REDIS_PASSWORD || 'secret',
     ttl: 3600,
+    db: 0,
+  },
+  userCache: {
+    host: process.env.REDIS_HOST || 'cache',
+    port: parseInt(process.env.REDIS_PORT) || 6379,
+    password: process.env.REDIS_PASSWORD || 'secret',
+    ttl: 60 * 60 * 24,
+    db: 1,
   },
   database: {
     type: 'postgres',
