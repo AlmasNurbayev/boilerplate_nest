@@ -2,11 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
+import { disconnect } from 'mongoose';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 
   afterAll(async () => {
+    await disconnect();
     await app.close();
   });
 
@@ -29,7 +31,7 @@ describe('AppController (e2e)', () => {
   it('/articles/999 (GET fail)', () => {
     return request(app.getHttpServer()).get('/articles/999').expect(404);
   });
-  it('/articles/ (GET success)', () => {
+  it('/articles/ (GET success)', async () => {
     return request(app.getHttpServer())
       .get('/articles/')
       .expect(200)

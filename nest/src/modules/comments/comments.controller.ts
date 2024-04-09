@@ -25,7 +25,7 @@ import {
   ApiOperation,
   ApiBadRequestResponse,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 
 @ApiTags('comments')
 @Controller('comments')

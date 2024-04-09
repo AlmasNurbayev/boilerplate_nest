@@ -17,7 +17,7 @@ import {
   ApiBearerAuth,
   ApiBody,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { BooksService } from './books.service';
 import {
   BooksCreateDto,
@@ -26,7 +26,7 @@ import {
   BooksListDto,
   BooksUpdateDto,
 } from './schemas/books.dto';
-import { IdMongoPipe } from 'src/pipes/id_mongo.pipe';
+import { IdMongoPipe } from '../../pipes/id_mongo.pipe';
 
 @ApiTags('books')
 @Controller('books')

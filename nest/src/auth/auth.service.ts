@@ -27,7 +27,7 @@ import {
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { ConfirmRedis } from './interfaces/confirm_redis';
-import { SmscService } from 'src/providers/smsc.service';
+import { SmscService } from '../providers/smsc.service';
 
 @Injectable()
 export class AuthService {

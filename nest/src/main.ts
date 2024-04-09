@@ -39,6 +39,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   app.enableCors(configService.get('cors'));
+  app.enableShutdownHooks();
 
   await app.listen(parseInt(process.env.APP_PORT) || 3000);
 }

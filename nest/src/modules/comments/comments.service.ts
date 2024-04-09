@@ -1,4 +1,4 @@
-import { Comment } from 'src/entities/comments.mongo';
+import { Comment } from '../../entities/comments.mongo';
 import {
   CommentsCreateDto,
   CommentsFilterDto,
@@ -7,7 +7,7 @@ import {
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, SortOrder } from 'mongoose';
-import { Book } from 'src/entities/books.mongo';
+import { Book } from '../../entities/books.mongo';
 
 @Injectable()
 export class CommentsService {
