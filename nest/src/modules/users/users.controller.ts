@@ -27,7 +27,6 @@ export class UsersController {
   @ApiOperation({ summary: 'by id' })
   @ApiResponse({ status: 200, type: UserWithoutPasswordDto })
   @ApiBadRequestResponse({ description: 'id # does not exist' })
-  @UsePipes(new ValidationPipe())
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   getById(@Param('id', ParseIntPipe) id: number) {

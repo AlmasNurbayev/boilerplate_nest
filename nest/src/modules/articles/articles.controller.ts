@@ -29,6 +29,8 @@ import {
   ArticlesUpdateDto,
 } from './schemas/articles.dto';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { UserDecorator } from 'src/decorators/user.decorator';
+import { UserFullDto } from '../users/schemas/user.dto';
 
 @ApiTags('articles')
 @Controller('articles')
@@ -49,8 +51,13 @@ export class ArticlesController {
   @ApiOperation({ summary: 'by id' })
   @ApiResponse({ status: 200, type: ArticlesFullDto })
   @ApiBadRequestResponse({ description: 'id # does not exist' })
-  @UsePipes(new ValidationPipe())
-  getById(@Param('id', ParseIntPipe) id: number) {
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  getById(
+    @Param('id', ParseIntPipe) id: number,
+    @UserDecorator() user: UserFullDto,
+  ) {
+    console.log(user);
     return this.articlesService.getById(id);
   }
 
@@ -65,7 +72,6 @@ export class ArticlesController {
   @ApiOperation({ summary: 'by id' })
   @ApiBody({ type: ArticlesUpdateDto })
   @ApiResponse({ status: 200, type: ArticlesFullDto })
-  @UsePipes(new ValidationPipe())
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   async update(
@@ -79,7 +85,6 @@ export class ArticlesController {
   @ApiOperation({ summary: 'by id' })
   @ApiResponse({ status: 200, type: ArticlesFullDto })
   @ApiBadRequestResponse({ description: 'id # does not exist' })
-  @UsePipes(new ValidationPipe())
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   delete(@Param('id', ParseIntPipe) id: number) {
