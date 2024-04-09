@@ -26,6 +26,7 @@ import {
   BooksListDto,
   BooksUpdateDto,
 } from './schemas/books.dto';
+import { IdMongoPipe } from 'src/pipes/id_mongo.pipe';
 
 @ApiTags('books')
 @Controller('books')
@@ -47,7 +48,7 @@ export class BooksController {
   @ApiBadRequestResponse({ description: 'id # does not exist' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  getById(@Param('id') id: string) {
+  getById(@Param('id', IdMongoPipe) id: string) {
     return this.booksService.getById(id);
   }
 
@@ -64,7 +65,7 @@ export class BooksController {
   @ApiResponse({ status: 200, type: BooksFullDto })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  update(@Param('id') id: string, @Body() data: BooksUpdateDto) {
+  update(@Param('id', IdMongoPipe) id: string, @Body() data: BooksUpdateDto) {
     return this.booksService.update(id, data);
   }
 
@@ -74,7 +75,7 @@ export class BooksController {
   @ApiBadRequestResponse({ description: 'id # does not exist' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  delete(@Param('id') id: string) {
+  delete(@Param('id', IdMongoPipe) id: string) {
     return this.booksService.delete(id);
   }
 }

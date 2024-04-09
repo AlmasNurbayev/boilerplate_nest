@@ -1,8 +1,6 @@
 import {
   Controller,
   Get,
-  UsePipes,
-  ValidationPipe,
   Param,
   ParseIntPipe,
   UseGuards,
