@@ -39,9 +39,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!user || user.id !== payload.id) {
       throw new UnauthorizedException();
     }
-    if (!user.is_confirmed) {
-      throw new HttpException('User is not confirmed', HttpStatus.BAD_REQUEST);
-    }
     const { password: _, ...UserWithoutPassword } = user; // eslint-disable-line
     return UserWithoutPassword;
   }
