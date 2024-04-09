@@ -196,7 +196,7 @@ export class AuthService {
       try {
         // отправляем ассинхронно и не дожидаемся ответа, чтобы не тормозить сервис
         this.mailerService.sendMail({
-          from: this.configService.get('mailer.transport.auth.user'),
+          //from: this.configService.get('mailer.transport.auth.user'),
           to: data.login,
           subject: 'confirm code ' + this.configService.get('name'),
           text: `use this code: ${code}`,
