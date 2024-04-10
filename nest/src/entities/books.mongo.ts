@@ -7,7 +7,7 @@ export type BooksDocument = HydratedDocument<Book>;
 @Schema()
 // название класса + "s" сопоставляется с коллекцией в MongoDB
 export class Book {
-  @Prop({ type: SchemaTypes.String, required: true, unique: true })
+  @Prop({ type: SchemaTypes.String, required: true })
   title: string;
 
   @Prop({ type: SchemaTypes.String, required: true })
@@ -21,3 +21,4 @@ export class Book {
 }
 
 export const BooksSchema = SchemaFactory.createForClass(Book);
+BooksSchema.index({ title: 'text', text: 'text' });

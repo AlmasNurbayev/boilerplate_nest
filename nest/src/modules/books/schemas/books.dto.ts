@@ -57,13 +57,11 @@ export class BooksFilterDto extends PaginationDto {
   @IsString()
   _id: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    required: false,
+    description: 'search in string fields, entire word must match',
+  })
   @IsOptional()
   @IsString()
-  title: string;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  text: string;
+  searchText: string;
 }

@@ -32,22 +32,18 @@ export class BooksService {
     // фильтрация - перекладываем query в форматы MongoDB
     const where: any = {};
     const { take, skip, order } = query;
-    if (query.title) {
-      // поиск по подстроке
-      where.title = { $regex: query.title, $options: 'i' };
-    }
-    if (query.text) {
-      // поиск по подстроке
-      where.text = { $regex: query.text, $options: 'i' };
+    if (query.searchText) {
+      // поиск по подстрокев полях, где есть текстовой индекс
+      where.$text = { $search: query.searchText, $caseSensitive: false };
     }
     let sort:
       | string
       | { [key: string]: SortOrder | { $meta: any } }
       | [string, SortOrder][] = {};
+
     if (order) {
       sort = { [order.split(' ')[0]]: order.split(' ')[1] === 'ASC' ? 1 : -1 };
     }
-
     const books = await this.bookModel
       .find(where)
       .skip(skip)
