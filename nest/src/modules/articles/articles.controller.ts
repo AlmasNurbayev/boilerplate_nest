@@ -51,13 +51,13 @@ export class ArticlesController {
   @ApiOperation({ summary: 'by id' })
   @ApiResponse({ status: 200, type: ArticlesFullDto })
   @ApiBadRequestResponse({ description: 'id # does not exist' })
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard)
   getById(
     @Param('id', ParseIntPipe) id: number,
-    @UserDecorator() user: UserFullDto,
+    //@UserDecorator() user: UserFullDto,
   ) {
-    console.log(user);
+    //console.log(user);
     return this.articlesService.getById(id);
   }
 
