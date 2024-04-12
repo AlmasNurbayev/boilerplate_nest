@@ -18,8 +18,11 @@
 ## Регистрация и аутентификация
 - используется passport, passport-jwt, bcrypt
 - по почте или логину (loginType 'email' или 'phone')
-- перед регистрацией нужно подтвердить email или phone через полученный код
-- для запроса и подтверждения логина использовать ендпойнты request_confirm, submit_confirm
+- перед регистрацией нужно подтвердить email или phone через полученный код. Последовательность:
+    - запрашиваем код - GET /auth/request_confirm?login=mail@mail.ru&type=email
+    - подтверждаем код - GET /auth/submit_confirm?login=mail@mail.ru&type=email&code=899456
+    - регистрируемся - POST /auth/register с телом {"email": "mail@mail.ru","password": "123123"}
+    - логинимся - POST /auth/login с телом {"login": "mail@mail.ru","type": "email","password": "123123"}
 
 ## Необходимые внешние сервисы
 - почтовая учетка для SMTP-отправки
