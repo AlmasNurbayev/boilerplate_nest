@@ -11,14 +11,14 @@ import * as redisStore from 'cache-manager-redis-store';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BooksModule } from './modules/books/books.module';
 import { CommentsModule } from './modules/comments/comments.module';
-import { app, database, mailer, sms } from './config';
+import { app, database, mailer, rmq, sms } from './config';
 import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       // cache: true,
-      load: [app, database, mailer, sms],
+      load: [app, database, mailer, sms, rmq],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

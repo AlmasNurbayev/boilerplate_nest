@@ -91,8 +91,8 @@ export class AuthService {
     const { password: _, ...userWithoutPassword } = user; // eslint-disable-line
     return {
       user: userWithoutPassword,
-      accessToken: 'Bearer ' + accessToken,
-      refreshToken: 'Bearer ' + refreshToken,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     };
   }
 
@@ -163,20 +163,16 @@ export class AuthService {
       throw new UnauthorizedException();
     }
     // создаем новую пару токенов
-    const accessToken =
-      'Bearer ' +
-      (await this.authCommonService.generateAccessToken({
-        type,
-        login,
-        id,
-      }));
-    const refreshToken =
-      'Bearer ' +
-      (await this.authCommonService.generateRefreshToken({
-        type,
-        login,
-        id,
-      }));
+    const accessToken = await this.authCommonService.generateAccessToken({
+      type,
+      login,
+      id,
+    });
+    const refreshToken = await this.authCommonService.generateRefreshToken({
+      type,
+      login,
+      id,
+    });
     return { accessToken, refreshToken };
   }
 

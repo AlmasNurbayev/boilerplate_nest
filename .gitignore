@@ -6,6 +6,7 @@ db
 cache
 mongo
 backups
+rabbitmq
 
 # Logs
 nest/logs

@@ -7,6 +7,7 @@ services:
     ports:
       - ${MONGOPORT_EXTERNAL}:27017
     environment:
+      TZ: 'Asia/Qyzylorda'
       MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
       MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
@@ -17,7 +18,7 @@ services:
     ports:
       - ${PGPORT_EXTERNAL}:5432
     environment:
-      TZ: 'Asia/Almaty'
+      TZ: 'Asia/Qyzylorda'
       POSTGRES_DB: ${DB_DATABASE}
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -27,6 +28,8 @@ services:
 
   cache:
     image: redis:7.2.4
+    environment:
+      TZ: 'Asia/Qyzylorda'
     # command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
     command: redis-server --maxmemory 1GB --maxmemory-policy volatile-lru --loglevel warning --requirepass ${REDIS_PASSWORD}
     volumes:
@@ -34,12 +37,32 @@ services:
     ports:
       - ${REDISPORT_EXTERNAL}:6379
 
+  rabbitmq:
+    image: rabbitmq:3.13.1-management
+    hostname: rabbitmq
+    restart: always
+    environment:
+      TZ: 'Asia/Qyzylorda'
+      RABBITMQ_DEFAULT_USER: ${RM_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${RM_PASSWORD}
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: -rabbit log_levels [{connection,error},{default,error}] disk_free_limit 2147483648
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq
+    ports:
+      - ${RM_PORT1}:15672
+      #- ${RM_PORT2}:5672
+    networks:
+      kofd:
+         aliases:
+           - rabbitmq.local
+      default:  
   nest:
     image: node:20.11.1
     depends_on:
     - db
     - mongo
     - cache
+    - rabbitmq
     command: bash -c "npm install && npm run typeorm migration:run -- -d src/data-source.ts && npm run start:dev"
     working_dir: /app
     volumes:
@@ -48,7 +71,7 @@ services:
       - 3000:3000
       - ${EMAIL_PORT}:${EMAIL_PORT}
     environment:
-      TZ: 'Asia/Almaty'
+      TZ: 'Asia/Qyzylorda'
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
       DB_USERNAME: ${DB_USERNAME}
@@ -66,8 +89,14 @@ services:
       SMSC_HOST: ${SMSC_HOST}
       SMSC_USER: ${SMSC_USER}
       SMSC_PASSWORD: ${SMSC_PASSWORD}
+      RMQ_URL: amqp://${RM_USERNAME}:${RM_PASSWORD}@rabbitmq:5672
       APP_URL: ${APP_URL}
       APP_PORT: ${APP_PORT}
       WEB_URL: ${WEB_URL}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     restart: unless-stopped
+
+networks:
+    kofd:
+      name: "kofd"
+    default:  

@@ -12,7 +12,6 @@ import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
 import { SmscService } from '../providers/smsc.service';
 import { HttpModule } from '@nestjs/axios';
-import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [

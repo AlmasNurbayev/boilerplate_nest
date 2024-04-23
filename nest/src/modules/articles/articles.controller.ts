@@ -29,8 +29,6 @@ import {
   ArticlesUpdateDto,
 } from './schemas/articles.dto';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
-import { UserDecorator } from '../../decorators/user.decorator';
-import { UserFullDto } from '../users/schemas/user.dto';
 
 @ApiTags('articles')
 @Controller('articles')

@@ -42,6 +42,13 @@ export class ArticlesFullDto {
   @ApiProperty({ required: true })
   @IsDateString()
   updated_at: Date;
+
+  @ApiProperty({
+    required: false,
+    description: 'returned only for create method',
+  })
+  @IsBoolean()
+  sended?: boolean;
 }
 
 export class ArticlesListDto {

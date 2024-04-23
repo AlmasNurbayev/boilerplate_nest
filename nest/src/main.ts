@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { EntityNotFoundErrorFilter } from './filters/db.not_found.filter';
 import { QueryFailedFilter } from './filters/db.query_failed.filter';
@@ -41,6 +41,11 @@ async function bootstrap() {
   app.enableCors(configService.get('cors'));
   app.enableShutdownHooks();
 
-  await app.listen(parseInt(process.env.APP_PORT) || 3000);
+  app.connectMicroservice(configService.get('rmq_service'));
+  await app.startAllMicroservices();
+
+  await app.listen(configService.get('port'));
+
+  Logger.log('app started on port: ' + configService.get('port'));
 }
 bootstrap();

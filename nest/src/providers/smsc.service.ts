@@ -1,9 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AxiosResponse } from 'axios';
-import { fstat, writeFile } from 'fs';
-import { Observable, firstValueFrom, map } from 'rxjs';
+import { firstValueFrom, map } from 'rxjs';
 
 @Injectable()
 export class SmscService {

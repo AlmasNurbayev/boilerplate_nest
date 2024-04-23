@@ -18,6 +18,8 @@ import { ILike, Repository } from 'typeorm';
 //import { Users } from '../../entities/users.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { RmqClientService } from 'src/providers/rmq_client/rmq.service';
+import { RmqPatterns } from 'src/common/rmq_patterns';
 
 @Injectable()
 export class ArticlesService {
@@ -28,6 +30,7 @@ export class ArticlesService {
     // @InjectRepository(Users)
     // private readonly usersRepository: Repository<Users>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly rmqClientService: RmqClientService,
   ) {}
 
   async create(data: ArticlesCreateDto): Promise<ArticlesFullDto> {
@@ -38,7 +41,11 @@ export class ArticlesService {
     // }
     const article = await this.articlesRepository.save(data);
     await this.cacheManager.set(article.id.toString(), article); // обновляем кеш
-    return article;
+    const sended = this.rmqClientService.send(
+      RmqPatterns.article_created,
+      article,
+    );
+    return { sended, ...article };
   }
 
   async list(filter: ArticlesFilterDto): Promise<ArticlesListDto> {
@@ -60,7 +67,7 @@ export class ArticlesService {
     }
 
     const [articles, count] = await this.articlesRepository.findAndCount({
-      // выбираем все поля кроме Text
+      // выбираем все поля кроме Text, из-за его возможно большого размера
       select: [
         'id',
         'title',
@@ -73,6 +80,11 @@ export class ArticlesService {
       take,
       skip,
       order: orderObject,
+    });
+
+    this.rmqClientService.send(RmqPatterns.article_listed, {
+      data: articles,
+      count,
     });
 
     return {
@@ -119,6 +131,7 @@ export class ArticlesService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+    this.rmqClientService.send(RmqPatterns.article_deleted, article);
     await this.cacheManager.del(id.toString()); // удаляем кеш
     return article;
   }
