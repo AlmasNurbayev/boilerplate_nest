@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ArticlesModule } from './modules/articles/articles.module';
@@ -13,9 +13,15 @@ import { BooksModule } from './modules/books/books.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { app, database, mailer, rmq, sms } from './config';
 import { MailerModule } from '@nestjs-modules/mailer';
+import {
+  PrometheusModule,
+  makeCounterProvider,
+} from '@willsoto/nestjs-prometheus';
+import { HttpRequestTotalMiddleware } from './middlewares/http_requests_total';
 
 @Module({
   imports: [
+    PrometheusModule.register(),
     ConfigModule.forRoot({
       // cache: true,
       load: [app, database, mailer, sms, rmq],
@@ -57,6 +63,17 @@ import { MailerModule } from '@nestjs-modules/mailer';
     CommentsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    makeCounterProvider({
+      name: 'http_requests_total',
+      help: 'Total number of HTTP requests',
+      labelNames: ['method', 'route', 'statusCode', 'originalUrl'],
+    }),
+  ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(HttpRequestTotalMiddleware).forRoutes('*');
+  }
+}
